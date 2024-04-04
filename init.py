@@ -58,4 +58,24 @@ for i in range(len(df)):
 low_average_pay = 0
 max_average_pay = 128547
 
+#create a annual-pay-points column to rank counties based on average annual pay
+for i in range(len(df)):
+    if len(df['workforce_wages'][i]) > 0:
+        number = df['workforce_wages'][i][0]['annual_average_pay']
+        print(number)
+    else:
+        number = 0
+    if number <= low_average_pay:
+        normalize = 0
+    elif number >= max_average_pay:
+        normalize = 1
+    else:
+        normalize = ((number - low_average_pay) /
+                     (max_average_pay - low_average_pay))
+    points = (max_points_per_category * normalize)
+    df.loc[i, 'average-pay-points'] = points
+
+
+
+
 
