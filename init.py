@@ -75,7 +75,25 @@ for i in range(len(df)):
     points = (max_points_per_category * normalize)
     df.loc[i, 'average-pay-points'] = points
 
+# Median income points
+low_median_income = 25385
+max_median_income = 140382
 
-
+#create a median_income-points column to rank counties based on median income
+for i in range(len(df)):
+    if len(df['median_county_income'][i]) > 0:
+        number = df['median_county_income'][i][0]['median_income']
+        print(number)
+    else:
+        number = 0
+    if number <= low_median_income:
+        normalize = 0
+    elif number >= max_median_income:
+        normalize = 1
+    else:
+        normalize = ((number - low_median_income) /
+                     (max_median_income - low_median_income))
+    points = (max_points_per_category * normalize)
+    df.loc[i, 'median-income-points'] = points
 
 
