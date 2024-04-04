@@ -96,4 +96,25 @@ for i in range(len(df)):
     points = (max_points_per_category * normalize)
     df.loc[i, 'median-income-points'] = points
 
+# Unemployment rate points
+low_unemployment_rate = 0.7
+max_unemployment_rate = 18.3
+
+#create a unemployment-points column to rank counties based on unemployment_by_county
+for i in range(len(df)):
+    if len(df['unemployment_by_county'][i]) > 0:
+        number = df['unemployment_by_county'][i][0]['unemployment_rate']
+        print(number)
+    else:
+        number = 0
+    if number <= low_unemployment_rate:
+        normalize = 1
+    elif number >= max_unemployment_rate:
+        normalize = 0
+    else:
+        normalize = ((number - low_unemployment_rate) /
+                         (max_unemployment_rate - low_unemployment_rate))
+    points = (max_points_per_category * normalize)
+    df.loc[i, 'unemployment-points'] = points
+
 
