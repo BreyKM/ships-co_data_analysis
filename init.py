@@ -20,8 +20,42 @@ responseTable = supabase.table('usa_county_list') \
 
 df = pd.DataFrame(responseTable.data)
 
+
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.options.display.width = 0
 
-print(df)
+
+max_points_per_category = .25
+
+#combine the state and county tax rates to create tax-rate column
+for i in range(len(df)):
+    if len(df['county_tax_rate'][i]) > 0:
+        df.loc[i, 'tax-rate'] = df['state_tax_rate'][i]['state_tax_rate'] + \
+            df['county_tax_rate'][i][0]['local_tax_rate']
+        # print(df['tax-rate'][i])
+    else:
+        df.loc[i, 'tax-rate'] = df['state_tax_rate'][i]['state_tax_rate']
+        # print(df['tax-rate'][i])
+
+min_tax_rate = df['tax-rate'].min()
+max_tax_rate = df['tax-rate'].max()
+
+#create a tax-points column to rank counties based on tax-rate
+for i in range(len(df)):
+    number = df['tax-rate'][i]
+    if number < min_tax_rate:
+        normalize = 1
+    elif number > max_tax_rate:
+        normalize = 0
+    else:
+        normalize = 1 - ((number - min_tax_rate) /
+                         (max_tax_rate - min_tax_rate))
+    points = (max_points_per_category * normalize)
+    df.loc[i, 'tax-points'] = points
+
+# Average pay points
+low_average_pay = 0
+max_average_pay = 128547
+
+
